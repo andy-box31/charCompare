@@ -1,0 +1,329 @@
+<html>
+<head>
+<title> Glyph Compare  </title>
+<style type="text/css">
+	#outer{margin-left:auto;margin-right:auto;width: 1100px;}
+	#top-links{font-family: helvetica; text-decoration: none; font-size: 15px; color: #777; text-align: center;}
+	a{color: #44e; text-decoration: none; font-size: 20px;}
+	#main-block{height: 500px; width: 880px;  float:right;}
+	#description{font-family: helvetica; float:left; width: 200px; height: 500px; color: #555; margin-top: 100px; }
+	#display{font-size: 400px; width: 850px; height: 500px; background: url('grid-bg.jpg'); border: 1px solid #bbb; padding-top:10px;}
+	#left{float: left; width: 1em; height: 1.3em; line-height: 1em; width: 400px; padding-left: 50px;}
+	#right{float: left; width: 1em; height: 1.3em; line-height: 1em; width: 400px;}
+	.alg-cent{margin: 0px auto; width: 90%; margin-top: 40px; opacity: 0.8; filter: alpha(opacity=80);}
+	#elem1{ font-family: helvetica;  border: 3px solid #333; padding: 0px; margin: 0px;}
+	#elem2{ font-family: arial;border: 3px solid #900; padding: 0px; margin: 0px; color:#b00;}
+	.heading{font-size:25px; line-height: 25px; font-family: helvetica; margin-bottom: 40px; background:#555; margin-left: 40px; padding: 4px 12px; color: #eee;}
+</style>
+   <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js"></script>
+    <script type="text/javascript">
+        dojo.ready(function(){
+       
+   			dojo.connect(dojo.query(".choice-char").onclick( function(){dojo.byId("elem1").innerHTML = this.innerHTML;dojo.byId("elem2").innerHTML = this.innerHTML;}));
+   		
+		 });
+   </script>
+   
+   <script type="text/javascript">//<![CDATA[
+
+function Browser() {
+
+  var ua, s, i;
+
+  this.isIE    = false;
+  this.isNS    = false;
+  this.version = null;
+
+  ua = navigator.userAgent;
+  //alert("test");
+ // alert(ua);
+  s = "MSIE";
+  if ((i = ua.indexOf(s)) >= 0) {
+  //	alert(ua + "   msie   :  " + this.version);
+    this.isIE = true;
+   // this.version = parseFloat(ua.substr(i + s.length));
+    return;
+  }
+
+  s = "Netscape6/";
+  if ((i = ua.indexOf(s)) >= 0) {
+  //alert(ua + "  netscape   :  " + this.version);
+    this.isNS = true;
+  //  this.version = parseFloat(ua.substr(i + s.length));
+    return;
+  }
+
+  // Treat any other "Gecko" browser as NS 6.1.
+
+  s = "Gecko";
+  if ((i = ua.indexOf(s)) >= 0) {
+  //alert(ua + "  gecko   :  " + this.version);
+    this.isNS = true;
+ //   this.version = 6.1;
+    return;
+  }
+  
+  //testing for opera
+   s = "Opera";
+  if ((i = ua.indexOf(s)) >= 0) {
+  //alert(ua + "  opera   :  " + this.version);
+    this.isNS = true;
+  //  this.version = 6.1;
+    return;
+  }
+}
+
+var browser = new Browser();
+
+// Global object to hold drag information.
+
+var dragObj = new Object();
+dragObj.zIndex = 0;
+
+function dragStart(event, id) {
+
+  var el;
+  var x, y;
+
+  // If an element id was given, find it. Otherwise use the element being
+  // clicked on.
+
+  if (id)
+    dragObj.elNode = document.getElementById(id);
+  else {
+    if (browser.isIE)
+      dragObj.elNode = window.event.srcElement;
+    if (browser.isNS)
+      dragObj.elNode = event.target;
+
+    // If this is a text node, use its parent element.
+
+    if (dragObj.elNode.nodeType == 3)
+      dragObj.elNode = dragObj.elNode.parentNode;
+  }
+
+  // Get cursor position with respect to the page.
+
+  if (browser.isIE) {
+    x = window.event.clientX + document.documentElement.scrollLeft
+      + document.body.scrollLeft;
+    y = window.event.clientY + document.documentElement.scrollTop
+      + document.body.scrollTop;
+  }
+  if (browser.isNS) {
+    x = event.clientX + window.scrollX;
+    y = event.clientY + window.scrollY;
+  }
+
+  // Save starting positions of cursor and element.
+
+  dragObj.cursorStartX = x;
+  dragObj.cursorStartY = y;
+  dragObj.elStartLeft  = parseInt(dragObj.elNode.style.left, 10);
+  dragObj.elStartTop   = parseInt(dragObj.elNode.style.top,  10);
+
+  if (isNaN(dragObj.elStartLeft)) dragObj.elStartLeft = 0;
+  if (isNaN(dragObj.elStartTop))  dragObj.elStartTop  = 0;
+
+  // Update element's z-index.
+
+  dragObj.elNode.style.zIndex = ++dragObj.zIndex;
+
+  // Capture mousemove and mouseup events on the page.
+
+  if (browser.isIE) {
+    document.attachEvent("onmousemove", dragGo);
+    document.attachEvent("onmouseup",   dragStop);
+    window.event.cancelBubble = true;
+    window.event.returnValue = false;
+  }
+  if (browser.isNS) {
+    document.addEventListener("mousemove", dragGo,   true);
+    document.addEventListener("mouseup",   dragStop, true);
+    event.preventDefault();
+  }
+}
+
+function dragGo(event) {
+
+  var x, y;
+
+  // Get cursor position with respect to the page.
+
+  if (browser.isIE) {
+    x = window.event.clientX + document.documentElement.scrollLeft
+      + document.body.scrollLeft;
+    y = window.event.clientY + document.documentElement.scrollTop
+      + document.body.scrollTop;
+  }
+  if (browser.isNS) {
+    x = event.clientX + window.scrollX;
+    y = event.clientY + window.scrollY;
+  }
+
+  // Move drag element by the same amount the cursor has moved.
+
+  dragObj.elNode.style.left = (dragObj.elStartLeft + x - dragObj.cursorStartX) + "px";
+  dragObj.elNode.style.top  = (dragObj.elStartTop  + y - dragObj.cursorStartY) + "px";
+
+  if (browser.isIE) {
+    window.event.cancelBubble = true;
+    window.event.returnValue = false;
+  }
+  if (browser.isNS)
+    event.preventDefault();
+}
+
+function dragStop(event) {
+
+  // Stop capturing mousemove and mouseup events.
+
+  if (browser.isIE) {
+    document.detachEvent("onmousemove", dragGo);
+    document.detachEvent("onmouseup",   dragStop);
+  }
+  if (browser.isNS) {
+    document.removeEventListener("mousemove", dragGo,   true);
+    document.removeEventListener("mouseup",   dragStop, true);
+  }
+}
+
+//]]></script>
+  
+</head>
+<body>
+
+
+<div id="outer">
+<div id="description">
+	<p>This tool allows you to compare glyphs from different fonts.</p>
+	<p>The glyph is styled to show the em square for comparison. As different fonts have different
+	heights and em square size, they will not align exactly as is prefered <span style="font-size: 10px;">anyone with sugestions 
+	as to how this can be done feel free to contact me</span>.<br /> The glyphs are set to font-size: 400px; with line-height: 1em;</p>
+	All css, html and javascript is included in this one file so you can see it all by doing 'view source code'. Enjoy. And let me know 
+	if you have any suggestions or comments.</p><a href="../contact">contact</a>
+</div>
+<div id="main-block">
+<div id="top-links">
+<a href="#" class="choice-char" id="low-a">a</a> | <a href="#" class="choice-char" id="low-b">b</a> | <a href="#" class="choice-char" id="low-c">c</a> | <a href="#" class="choice-char" id="low-d">d</a> | <a href="#" class="choice-char" id="low-e">e</a> | 
+<a href="#" class="choice-char" id="low-f">f</a> | <a href="#" class="choice-char" id="low-g">g</a> | <a href="#" class="choice-char" id="low-h">h</a> | <a href="#" class="choice-char" id="low-i">i</a> | <a href="#" class="choice-char" id="low-j">j</a> | 
+<a href="#" class="choice-char" id="low-k">k</a> | <a href="#" class="choice-char" id="low-l">l</a> | <a href="#" class="choice-char" id="low-m">m</a> | <a href="#" class="choice-char" id="low-n">n</a> | <a href="#" class="choice-char" id="low-o">o</a> | 
+<a href="#" class="choice-char" id="low-p">p</a> | <a href="#" class="choice-char" id="low-q">q</a> | <a href="#" class="choice-char" id="low-r">r</a> | <a href="#" class="choice-char" id="low-s">s</a> | <a href="#" class="choice-char" id="low-t">t</a> | 
+<a href="#" class="choice-char" id="low-u">u</a> | <a href="#" class="choice-char" id="low-v">v</a> | <a href="#" class="choice-char" id="low-w">w</a> | <a href="#" class="choice-char" id="low-x">x</a> | <a href="#" class="choice-char" id="low-y">y</a> | <a href="#" class="choice-char" id="low-z">z</a>
+<br />
+<a href="#" class="choice-char" id="upp-a">A</a> | <a href="#" class="choice-char" id="upp-b">B</a> | <a href="#" class="choice-char" id="upp-c">C</a> | <a href="#" class="choice-char" id="upp-d">D</a> | <a href="#" class="choice-char" id="upp-e">E</a> | 
+<a href="#" class="choice-char" id="upp-f">F</a> | <a href="#" class="choice-char" id="upp-g">G</a> | <a href="#" class="choice-char" id="upp-h">H</a> | <a href="#" class="choice-char" id="upp-i">I</a> | <a href="#" class="choice-char" id="upp-j">J</a> | 
+<a href="#" class="choice-char" id="upp-k">K</a> | <a href="#" class="choice-char" id="upp-l">L</a> | <a href="#" class="choice-char" id="upp-m">M</a> | <a href="#" class="choice-char" id="upp-n">N</a> | <a href="#" class="choice-char" id="upp-o">O</a> | 
+<a href="#" class="choice-char" id="upp-p">P</a> | <a href="#" class="choice-char" id="upp-q">Q</a> | <a href="#" class="choice-char" id="upp-r">R</a> | <a href="#" class="choice-char" id="upp-s">S</a> | <a href="#" class="choice-char" id="upp-t">T</a> | 
+<a href="#" class="choice-char" id="upp-u">U</a> | <a href="#" class="choice-char" id="upp-v">V</a> | <a href="#" class="choice-char" id="upp-w">W</a> | <a href="#" class="choice-char" id="upp-x">X</a> | <a href="#" class="choice-char" id="upp-y">Y</a> | <a href="#" class="choice-char" id="upp-z">Z</a>
+<br />
+<a href="#" class="choice-char" id="exclaim">!</a> | <a href="#" class="choice-char" id="att">@</a> | <a href="#" class="choice-char" id="hash">#</a> | <a href="#" class="choice-char" id="dollar">$</a> | <a href="#" class="choice-char" id="percent">%</a> | 
+<a href="#" class="choice-char" id="hat">^</a> | <a href="#" class="choice-char" id="star">*</a> | <a href="#" class="choice-char" id="openb">(</a> | <a href="#" class="choice-char" id="closeb">)</a> | <a href="#" class="choice-char" id="minus">-</a> | 
+<a href="#" class="choice-char" id="plus">+</a> | <a href="#" class="choice-char" id="equals">=</a> | <a href="#" class="choice-char" id="one">1</a> | <a href="#" class="choice-char" id="two">2</a> | <a href="#" class="choice-char" id="three">3</a> | 
+<a href="#" class="choice-char" id="four">4</a> | <a href="#" class="choice-char" id="five">5</a> | <a href="#" class="choice-char" id="six">6</a> | <a href="#" class="choice-char" id="seven">7</a> | <a href="#" class="choice-char" id="eight">8</a> | 
+<a href="#" class="choice-char" id="nine">9</a> | <a href="#" class="choice-char" id="zero">0</a> | <a href="#" class="choice-char" id="question">?</a> | <a href="#" class="choice-char" id="period">.</a> | <a href="#" class="choice-char" id="comma">,</a> | <a href="#" class="choice-char" id="semic">;</a>
+<a href="#" class="choice-char" id="greater">&gt;</a> | <a href="#" class="choice-char" id="less">&lt;</a> | <a href="#" class="choice-char" id="colon">:</a> | <a href="#" class="choice-char" id="2qoute">"</a> | <a href="#" class="choice-char" id="opencurl">{</a> | 
+<a href="#" class="choice-char" id="closecurl">}</a> | <a href="#" class="choice-char" id="opensquare">[</a> | <a href="#" class="choice-char" id="closesquare">]</a> | <a href="#" class="choice-char" id="tilda">~</a> | <a href="#"  class="choice-char"id="slash">/</a>  
+
+</div>
+
+<div id="dds" style="width: 850px; height: 20px;">
+
+<form id="aform">
+<select id="select1" size="1">
+<option value="Helvetica" selected="selected">Helvetica</option>
+<option value="Helvetica Neue" selected="selected">Helvetica Neue</option>
+<option value="Arial">Arial</option>
+<option value="Verdana">Verdana</option>
+<option value="Lucida Grande">Lucida Grande</option>
+<option value="Gill Sans">Gill Sans</option>
+<option value="Tahoma">Tahoma</option>
+<option value="Eurostile">Eurostile</option>
+
+
+<option value="Trebuchet MS">Trebuchet MS</option>
+<option value="Century Gothic">Century Gothic</option>
+<option value="Optima">Optima</option>
+<option value="Myriad Web">Myriad Web</option>
+<option value="Futura">Futura</option>
+
+
+<option value="Georgia">Georgia</option>
+<option value="Times">Times</option>
+<option value="Times New Roman">Times New Roman</option>
+
+<option value="Palatino">Palatino</option>
+<option value="Garamond">Garamond</option>
+<option value="Baskerville">Baskerville</option>
+<option value="Rockwell">Rockwell</option>
+<option value="Courier New">Courier New</option>
+</select>
+
+<select id="select2" size="1" style="float: right;">
+<option value="Helvetica">Helvetica</option>
+
+<option value="Helvetica Neue" selected="selected">Helvetica Neue</option>
+<option value="Arial"  selected="selected">Arial</option>
+<option value="Verdana">Verdana</option>
+<option value="Lucida Grande">Lucida Grande</option>
+<option value="Gill Sans">Gill Sans</option>
+<option value="Tahoma">Tahoma</option>
+<option value="Eurostile">Eurostile</option>
+
+
+<option value="Trebuchet MS">Trebuchet MS</option>
+<option value="Century Gothic">Century Gothic</option>
+<option value="Optima">Optima</option>
+<option value="Myriad Web">Myriad Web</option>
+<option value="Futura">Futura</option>
+
+
+<option value="Georgia">Georgia</option>
+<option value="Times">Times</option>
+<option value="Times New Roman">Times New Roman</option>
+
+<option value="Palatino">Palatino</option>
+<option value="Garamond">Garamond</option>
+<option value="Baskerville">Baskerville</option>
+<option value="Rockwell">Rockwell</option>
+<option value="Courier New">Courier New</option>
+</select>
+</form>
+ <script type="text/javascript">
+
+var selectmenu=document.getElementById("select1")
+selectmenu.onchange=function(){ //run some code when "onchange" event fires
+ var chosenoption=this.options[this.selectedIndex] //this refers to "selectmenu"
+ if (chosenoption.value!="nothing"){
+ 	document.getElementById('elem1').style.fontFamily=chosenoption.value;
+ 	document.getElementById('title1').innerHTML=chosenoption.value + "  <span style='font-size: 12px;'>(draggable)<\/span>";
+  
+ }
+}
+var selectmenu=document.getElementById("select2")
+selectmenu.onchange=function(){ //run some code when "onchange" event fires
+ var chosenoption=this.options[this.selectedIndex] //this refers to "selectmenu"
+ if (chosenoption.value!="nothing"){
+ 	document.getElementById('elem2').style.fontFamily=chosenoption.value;
+ 	document.getElementById('title2').innerHTML=chosenoption.value;
+  
+ }
+}
+
+</script>
+</div>
+
+
+
+<div id="display">
+
+<div id="left"><span class="heading" id="title1">Helvetica <span style="font-size: 12px;">(draggable)</span></span><div class="alg-cent" id="draggable" style="position:relative;left:0px;top:0px; opacity: 0.7; filter: alpha(opacity=70); width: 400px; cursor:move;"><span id="elem1" onmousedown="dragStart(event, 'draggable')">M</span></div></div>
+
+<div id="right"><span class="heading" id="title2">Arial</span><div class="alg-cent"><span id="elem2">M</span></div></div>
+
+</div>
+</div>
+</div>
+
+</body>
+</html>
