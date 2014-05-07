@@ -1,35 +1,27 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!--[if IE 7]><html class="no-js ie7"> <![endif]-->
+<!--[if IE 8]><html class="no-js ie8"> <![endif]-->
+<!--[if IE 9]><html class="no-js ie9"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<title></title>
-		<meta name="description" content="">
+		<title>Char Compare</title>
 		<meta name="viewport" content="width=device-width">
-		<style type="text/css">
-		/*RESETS/**/
-			article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block;}audio,canvas,video{display:inline;zoom:1;}audio:not([controls]){display:none;height:0;}[hidden]{display:none;}html{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:100%;}html,button,input,select,textarea{font-family:sans-serif;}a:focus{outline:thin dotted;}a:active,a:hover{outline:0;}h1{font-size:2em;margin:.67em 0;}h2{font-size:1.5em;margin:.83em 0;}h3{font-size:1.17em;margin:1em 0;}h4{font-size:1em;margin:1.33em 0;}h5{font-size:.83em;margin:1.67em 0;}h6{font-size:.67em;margin:2.33em 0;}abbr[title]{border-bottom:1px dotted;}b,strong{font-weight:700;}blockquote{margin:1em 40px;}dfn{font-style:italic;}hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0;}mark{background:#ff0;color:#000;}code,kbd,pre,samp{_font-family:'courier new', monospace;font-family:monospace, serif;font-size:1em;}pre{white-space:pre-wrap;word-wrap:break-word;}q{quotes:none;}q:before,q:after{content:none;}small{font-size:80%;}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;}sup{top:-.5em;}sub{bottom:-.25em;}dd{margin:0 0 0 40px;}menu,ol,ul{padding:0 0 0 40px;}nav ul,nav ol{list-style:none;list-style-image:none;}img{-ms-interpolation-mode:bicubic;border:0;}svg:not(:root){overflow:hidden;}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em;}legend{border:0;margin-left:-7px;padding:0;white-space:normal;}button,input,select,textarea{font-size:100%;margin:0;vertical-align:middle;}button,input{line-height:normal;}button,select{text-transform:none;}button,html input[type=button],/* 1 */
-input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer;overflow:visible;}button[disabled],html input[disabled]{cursor:default;}input[type=checkbox],input[type=radio]{box-sizing:border-box;height:13px;padding:0;width:13px;}input[type=search]{-moz-box-sizing:content-box;-webkit-appearance:textfield;-webkit-box-sizing:content-box;box-sizing:content-box;}input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none;}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}textarea{overflow:auto;vertical-align:top;}table{border-collapse:collapse;border-spacing:0;}body,figure,form{margin:0;}p,pre,dl,menu,ol,ul{margin:1em 0;}
-
-			/*custom/**/
-			.sub{font-size:10px;}
-		</style>
+		<link href="style.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
-		<div class="outer">
-			<aside>
-				<p>This tool allows you to compare glyphs from different fonts.</p>
+		<div class="outer grid-outer">
+			<aside class="description grid-width-20">
+				<p>This tool allows you to compare characters of different fonts.</p>
 				<p>The glyph is styled to show the em square for comparison. As different fonts have different
-				heights and em square size, they will not align exactly as is prefered <span class='sub'>anyone with sugestions 
+				heights and em square size, they will not align exactly as is prefered <span class='textSml'>anyone with sugestions 
 				as to how this can be done feel free to contact me</span>.<br /> The glyphs are set to font-size: 400px; with line-height: 1em;</p>
 				All css, html and javascript is included in this one file so you can see it all by doing 'view source code'. Enjoy. And let me know 
 				if you have any suggestions or comments.</p><a href="../contact">contact</a>
 			</aside>
-			<section>
-				<nav id="top-links">
+			<div class='main grid-width-80'>
+				<nav class="top">
 					<a href="#" class="choice-char" id="low-a">a</a> |
 					<a href="#" class="choice-char" id="low-b">b</a> |
 					<a href="#" class="choice-char" id="low-c">c</a> | 
@@ -121,8 +113,8 @@ input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer;ov
 					<a href="#" class="choice-char" id="tilda">~</a> | 
 					<a href="#"  class="choice-char"id="slash">/</a>  
 				</nav>
-				<section id="dds">
-					<form id="aform">
+				<section>
+					<form class="grid-outer grid-space">
 						<select id="select1" size="1">
 							<option value="Helvetica" selected="selected">Helvetica</option>
 							<option value="Helvetica Neue" selected="selected">Helvetica Neue</option>
@@ -147,7 +139,7 @@ input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer;ov
 							<option value="Courier New">Courier New</option>
 						</select>
 		
-						<select id="select2" size="1" style="float: right;">
+						<select id="select2" size="1">
 							<option value="Helvetica">Helvetica</option>
 		
 							<option value="Helvetica Neue" selected="selected">Helvetica Neue</option>
@@ -173,18 +165,19 @@ input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer;ov
 						</select>
 					</form>
 				</section>
-				<section id="display">
-					<div id="left">
-						<span class="heading" id="title1">Helvetica <span style="font-size: 12px;">(draggable)</span></span>
-						<div class="alg-cent" id="draggable"><span id="elem1">M</span></div>
+				<section class="display grid-outer">
+					<div class="grid-width-50" id="left">
+						<h2 class="heading" id="title1">Helvetica <span class='textSml'>(draggable)</span></h2>
+						<div class="alg-cent" id="draggable"><span class="subject" id="subj1">M</span></div>
 					</div>
-					<div id="right">
-						<span class="heading" id="title2">Arial</span>
-						<div class="alg-cent"><span id="elem2">M</span></div>
+					<div class="grid-width-50" id="right">
+						<h2 class="heading" id="title2">Arial</h2>
+						<div class="alg-cent"><span class="subject" id="subj2">M</span></div>
 					</div>
 				</section>
-			</section>
+			</div>
 		</div>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+		<script src="script.js"></script>
 	</body>
 </html>
